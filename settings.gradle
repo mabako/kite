@@ -1,0 +1,4 @@
+rootProject.name = "kite-gemini"
+include 'kite-lib'
+include 'kite-example'
+
