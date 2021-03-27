@@ -1,3 +1,5 @@
+@file:JvmName("ExampleServer")
+
 package low.orbit.kite.example
 
 import low.orbit.kite.GeminiResponse
@@ -9,6 +11,8 @@ import java.time.format.DateTimeFormatter
 
 fun main() {
     KiteServer(options {
+        port = System.getProperty("server.port", port.toString()).toInt()
+
         route("/hello.gmi") {
             gemtext {
                 h3("Oh, I didn't see you there")
