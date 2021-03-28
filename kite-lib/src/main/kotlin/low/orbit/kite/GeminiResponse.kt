@@ -9,7 +9,7 @@ sealed class GeminiResponse constructor(
     class Gemtext : GeminiResponse(20, MimeType.TEXT_GEMINI.value) {
         private val content: StringBuilder = StringBuilder()
 
-        fun withContent(newContent: String) : Gemtext {
+        fun withContent(newContent: String): Gemtext {
             content.clear()
             content.append(newContent)
             return this
@@ -32,11 +32,11 @@ sealed class GeminiResponse constructor(
     private class Error(status: Int, message: String) : GeminiResponse(status, message)
 
     companion object {
-        fun temporaryFailure(message: String = "Temporary Failure") : GeminiResponse = Error(40, message)
-        fun unavailable(message: String = "Unavailable") : GeminiResponse = Error(41, message)
+        fun temporaryFailure(message: String = "Temporary Failure"): GeminiResponse = Error(40, message)
+        fun unavailable(message: String = "Unavailable"): GeminiResponse = Error(41, message)
 
-        fun permanentFailure(message: String = "Permanent Failure") : GeminiResponse = Error(50, message)
-        fun notFound() : GeminiResponse = Error(51, "Not Found")
-        fun proxyResourceRefused() : GeminiResponse = Error(53, "Proxy Request refused")
+        fun permanentFailure(message: String = "Permanent Failure"): GeminiResponse = Error(50, message)
+        fun notFound(): GeminiResponse = Error(51, "Not Found")
+        fun proxyResourceRefused(): GeminiResponse = Error(53, "Proxy Request refused")
     }
 }

@@ -1,3 +1,13 @@
+buildscript {
+    repositories {
+        maven("https://plugins.gradle.org/m2/")
+    }
+
+    dependencies {
+        classpath("org.jlleitschuh.gradle:ktlint-gradle:10.0.0")
+    }
+}
+
 plugins {
     kotlin("jvm") version "1.4.31"
 }
@@ -8,6 +18,7 @@ repositories {
 
 subprojects {
     apply(plugin = "org.jetbrains.kotlin.jvm")
+    apply(plugin = "org.jlleitschuh.gradle.ktlint")
 
     java {
         sourceCompatibility = JavaVersion.VERSION_11

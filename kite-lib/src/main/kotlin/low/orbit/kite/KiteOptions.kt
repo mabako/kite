@@ -3,7 +3,7 @@ package low.orbit.kite
 class KiteOptions(
     override val routes: MutableList<GeminiRoute> = mutableListOf(),
     override var port: Int = DEFAULT_PORT
-) : KiteOptionsSnapshot{
+) : KiteOptionsSnapshot {
 
     /** Adds a route. */
     fun route(path: String, callback: () -> GeminiResponse) {

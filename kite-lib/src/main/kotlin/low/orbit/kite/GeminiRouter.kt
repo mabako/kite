@@ -44,7 +44,8 @@ class GeminiRouter(
             } catch (e: Exception) {
                 log.warn("Unable to invoke callback ${route.callback}", e)
                 GeminiResponse.temporaryFailure()
-            })
+            }
+        )
             .addListener(ChannelFutureListener.CLOSE)
     }
 

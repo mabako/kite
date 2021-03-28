@@ -1,11 +1,10 @@
 # 🪁 Kite
 
-A Kotlin [Gemini](https://gemini.circumlunar.space/) server powered by Netty.
+A Kotlin [Gemini][1] server powered by Netty,
 
 It works - which is more than I expected, given how little time I invested.
 
-[ExampleServer](kite-example/src/main/kotlin/low/orbit/kite/example/ExampleServer.kt)
-provides a first look at generating sites from Kotlin.
+[ExampleServer][2] provides a first look at generating sites from Kotlin.
 
 ## open TODOs
 
@@ -13,3 +12,6 @@ provides a first look at generating sites from Kotlin.
 - [ ] serve real files too (index.gmi! directory restrictions! mime types!)
 - [ ] certificate management (hostnames! expiry!)
 - [ ] tests
+
+[1]: https://gemini.circumlunar.space/
+[2]: kite-example/src/main/kotlin/low/orbit/kite/example/ExampleServer.kt

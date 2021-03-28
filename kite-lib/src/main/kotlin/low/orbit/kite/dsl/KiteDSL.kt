@@ -11,6 +11,5 @@ fun options(init: KiteOptions.() -> Unit) =
     KiteOptions()
         .also(init)
 
-
 fun gemtext(init: GeminiResponse.Gemtext.() -> Unit) =
     GeminiResponse.Gemtext().also(init)
