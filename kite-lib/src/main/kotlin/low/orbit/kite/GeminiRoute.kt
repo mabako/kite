@@ -9,6 +9,13 @@ sealed class GeminiRoute(
         private val exactRoute: String,
         callback: () -> GeminiResponse
     ) : GeminiRoute(callback) {
+
+        init {
+            require(exactRoute.startsWith("/")) {
+                "Path '$exactRoute' needs to start with /"
+            }
+        }
+
         override fun matches(geminiUrl: String) =
             geminiUrl == exactRoute
     }

@@ -5,8 +5,6 @@ import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler
 import org.slf4j.LoggerFactory
 import java.net.URL
-import java.net.URLConnection
-import java.net.URLStreamHandler
 
 /**
  * Executes the associates callbacks for gemini requests.
@@ -16,6 +14,10 @@ class GeminiRouter(
 ) : SimpleChannelInboundHandler<String>() {
 
     private val log = LoggerFactory.getLogger(GeminiRouter::class.java)
+
+    init {
+        UrlProtocolInitializer.init()
+    }
 
     /**
      * @param msg since a previous step maps the byte buffer to a String (and there's no multiple headers here),
@@ -81,23 +83,5 @@ class GeminiRouter(
     override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {
         log.warn("Caught unhandled exception handling request", cause)
         ctx.close()
-    }
-
-    companion object {
-        init {
-            URL.setURLStreamHandlerFactory { proto ->
-                if (proto == "gemini") {
-                    object : URLStreamHandler() {
-                        override fun openConnection(u: URL?): URLConnection {
-                            error("Can't open gemini connections, just need this for URL protocol support")
-                        }
-
-                        override fun getDefaultPort() = KiteOptions.DEFAULT_PORT
-                    }
-                } else {
-                    null
-                }
-            }
-        }
     }
 }

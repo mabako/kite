@@ -1,5 +1,5 @@
 # Self-Signed certificates
-/certificate.*
+certificate.*
 
 # Ignore Gradle project-specific cache directory
 .gradle

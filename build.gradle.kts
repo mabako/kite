@@ -25,8 +25,35 @@ subprojects {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
+    sourceSets {
+        create("integrationTest") {
+            compileClasspath += sourceSets.main.get().output
+            runtimeClasspath += sourceSets.main.get().output
+        }
+    }
+
+    val integrationTestImplementation: Configuration by configurations.getting {
+        extendsFrom(configurations.testImplementation.get())
+    }
+
+    val integrationTestRuntimeOnly: Configuration by configurations.getting {
+        extendsFrom(configurations.testRuntimeOnly.get())
+    }
+
+    val integrationTest = task<Test>("integrationTest") {
+        description = "Runs integration tests."
+        group = "verification"
+
+        testClassesDirs = sourceSets["integrationTest"].output.classesDirs
+        classpath = sourceSets["integrationTest"].runtimeClasspath
+        shouldRunAfter("test")
+    }
+
+    tasks.check { dependsOn(integrationTest) }
+
     dependencies {
         implementation(platform("org.jetbrains.kotlin:kotlin-bom"))
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+
     }
 }

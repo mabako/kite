@@ -1,6 +1,7 @@
 package low.orbit.kite
 
 import io.netty.bootstrap.ServerBootstrap
+import io.netty.channel.ChannelFuture
 import io.netty.channel.ChannelOption
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.channel.socket.nio.NioServerSocketChannel
@@ -14,8 +15,18 @@ class KiteServer(options: KiteOptions) {
 
     private val log = LoggerFactory.getLogger(KiteServer::class.java)
     private val kiteOptions = options.snapshot()
+    private var context: Context? = null
 
+    /** Runs the server forever, blocking call. */
     fun run() {
+        start()
+        context!!.channelFuture.channel().closeFuture().sync()
+    }
+
+    fun start() {
+        if (context != null)
+            throw IllegalStateException("Server context is already initialized, shut down the server first")
+
         val sslContext = selfSignedCertificate()
             .protocols("TLSv1.3", "TLSv1.2")
             .build()
@@ -33,13 +44,25 @@ class KiteServer(options: KiteOptions) {
 
             val future = bootstrap.bind(kiteOptions.port)
                 .sync()
+            context = Context(bossGroup, workerGroup, future)
             log.info("Started gemini server on port ${kiteOptions.port}")
-
-            future.channel().closeFuture().sync()
-        } finally {
-            workerGroup.shutdownGracefully()
-            bossGroup.shutdownGracefully()
+        } catch (e: Exception) {
+            shutdown()
         }
+    }
+
+    fun shutdown() {
+        val context = this.context
+            ?: throw IllegalStateException("Server context not available, start the server first")
+
+        log.info("Shutting down gemini server on port ${kiteOptions.port}")
+        val (bossGroup, workerGroup, future) = context
+        workerGroup.shutdownGracefully().sync()
+        bossGroup.shutdownGracefully().sync()
+
+        future.channel().closeFuture().sync()
+
+        this.context = null
     }
 
     private fun selfSignedCertificate(): SslContextBuilder {
@@ -57,4 +80,10 @@ class KiteServer(options: KiteOptions) {
             return SslContextBuilder.forServer(selfSignedCertificate.certificate(), selfSignedCertificate.privateKey())
         }
     }
+
+    private data class Context(
+        val bossGroup: NioEventLoopGroup,
+        val workerGroup: NioEventLoopGroup,
+        val channelFuture: ChannelFuture
+    )
 }
