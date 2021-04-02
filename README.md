@@ -11,7 +11,6 @@ It works - which is more than I expected, given how little time I invested.
 - [ ] support hosts other than localhost
 - [ ] serve real files too (index.gmi! directory restrictions! mime types!)
 - [ ] certificate management (hostnames! expiry!)
-- [ ] tests
 
 [1]: https://gemini.circumlunar.space/
 [2]: kite-example/src/main/kotlin/low/orbit/kite/example/ExampleServer.kt

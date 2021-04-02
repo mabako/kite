@@ -3,6 +3,8 @@ package low.orbit.kite
 import io.netty.channel.ChannelFutureListener
 import io.netty.channel.ChannelHandlerContext
 import io.netty.channel.SimpleChannelInboundHandler
+import io.netty.handler.ssl.SniCompletionEvent
+import io.netty.util.AttributeKey
 import org.slf4j.LoggerFactory
 import java.net.URL
 
@@ -66,6 +68,16 @@ class GeminiRouter(
             return false
         }
 
+        val expectedSniHost: String? = ctx.channel().attr(ATTR_SNI_HOSTNAME).get()
+        if (expectedSniHost == null) {
+            log.trace("No SNI hostname found, skipping comparison")
+        } else if (url.host != expectedSniHost) {
+            log.warn("SNI lookup was for {}, but request url is for {}", expectedSniHost, url.host)
+            ctx.writeAndFlush(GeminiResponse.permanentFailure("SNI Lookup Failure"))
+                .addListener(ChannelFutureListener.CLOSE)
+            return false
+        }
+
         val validPort = if (url.port == -1)
             url.defaultPort == kiteOptions.port
         else
@@ -80,8 +92,20 @@ class GeminiRouter(
         return true
     }
 
+    override fun userEventTriggered(ctx: ChannelHandlerContext, evt: Any) {
+        if (evt is SniCompletionEvent) {
+            log.trace("SNI Host name resolved to {}", evt.hostname())
+            ctx.channel().attr(ATTR_SNI_HOSTNAME).set(evt.hostname())
+        }
+        super.userEventTriggered(ctx, evt)
+    }
+
     override fun exceptionCaught(ctx: ChannelHandlerContext, cause: Throwable) {
         log.warn("Caught unhandled exception handling request", cause)
         ctx.close()
+    }
+
+    companion object {
+        private val ATTR_SNI_HOSTNAME = AttributeKey.valueOf<String>(GeminiRouter::class.java, "sni-hostname")
     }
 }
