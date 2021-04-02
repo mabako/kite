@@ -28,7 +28,7 @@ class KiteServer(options: KiteOptions) {
             throw IllegalStateException("Server context is already initialized, shut down the server first")
 
         val sslContext = selfSignedCertificate()
-            .protocols("TLSv1.3", "TLSv1.2")
+            .protocols("TLSv1.3")
             .build()
 
         val bossGroup = NioEventLoopGroup()

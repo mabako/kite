@@ -69,7 +69,7 @@ class GeminiClient(
     }
 
     companion object {
-        private const val protocol: String = "TLSv1.2"
+        private const val protocol: String = "TLSv1.3"
         private const val allocationSize = 64 * 1024
 
         init {
